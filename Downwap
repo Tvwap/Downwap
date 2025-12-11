@@ -1,0 +1,728 @@
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV4WAP LIVE4WAP TVGOTK WAPTV </title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <style>
+        :root {
+            /* Color Collection for Attractive Look */
+            --primary-bg: #0A0A0A;      
+            --secondary-bg: #1C1C1C;    
+            --text-primary: #FFFFFF;    
+            --text-secondary: #AAAAAA;  
+            --accent-color: #E50914;    
+            --time-color: #FFC300;      
+            --description-color: #888888; 
+            --quality-color: #008000;   
+            --category-bg: #4A148C;     
+            --download-icon: #2979FF; 
+            --selected-title: #FFFFFF; /* White text for the new header background */
+            --active-bg: #390069; 
+            --active-card-border: #FFC300; 
+            /* New Header Color (Deep Magenta/Purple) */
+            --header-bg-new: #6A1B9A; 
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            /* Padding for fixed controls. */
+            padding-top: 330px; 
+            transition: padding-top 0.4s ease;
+        }
+
+        /* Anchor Link Reset */
+        a { 
+            color: var(--text-primary);
+            text-decoration: none; 
+        } 
+        
+        /* --- Telegram Fixed Bar --- */
+        .telegram-btn {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 500px;
+            background-color: #333; 
+            z-index: 1003;
+        }
+        .telegram-btn table {
+            width: 100%;
+        }
+        .telegram-btn1, .telegram-btn2 {
+            width: 50%;
+            padding: 5px 0;
+            text-align: center;
+            font-weight: 900;
+            transition: background-color 0.3s;
+        }
+        .telegram-btn1 { background-color: var(--accent-color); color: white; }
+        .telegram-btn2 { background-color: #008000; color: white; } 
+
+
+        /* --- Player Section (FIXED) --- */
+        .player-container {
+            position: fixed;
+            top: 36px; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 500px;
+            z-index: 1001;
+            padding-bottom: 10px; 
+            overflow: visible; 
+        }
+
+        .player {
+            width: 100%;
+            margin: 0 auto;
+            aspect-ratio: 16/9;
+            border-radius: 0px;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            overflow: hidden;
+        }
+        
+        /* --- Selected Movie Title Row (NEW CSS) --- */
+        #selected-movie-title {
+            width: 100%;
+            max-width: 500px;
+            padding: 8px 10px; /* Adjusted padding since image is gone */
+            /* New beautiful CSS: Solid Deep Purple/Magenta */
+            background-color: var(--header-bg-new); 
+            color: var(--selected-title);
+            font-size: 0.8em;
+            font-weight: bold;    font-weight: 900;
+            display: flex; 
+            align-items: center;
+            /* Removed gap since image is removed */
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            margin-top: -1px; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Removed #selected-movie-title img CSS block */
+
+        #selected-movie-name-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-grow: 1;
+            line-height: 1.2;
+            text-transform: capitalize; /* Abbbb Abbbb pattern */
+            text-align: center; /* Center the text now that the image is gone */
+        }
+
+
+        /* --- Quality Options Scroll Container --- */
+        #server-buttons-container {
+            width: 100%; 
+            max-width: 500px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            padding: 4px 0; 
+            margin-bottom: 2px;
+            background-color: var(--secondary-bg);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Hide scrollbar for better appearance on modern browsers */
+        #server-buttons-container::-webkit-scrollbar {
+            display: none; 
+        }
+        #server-buttons-container {
+            -ms-overflow-style: none;  
+            scrollbar-width: none;  
+        }
+        
+        .channel-option {
+            display: inline-flex; 
+            align-items: center;
+            margin: 0 4px; 
+            cursor: pointer;
+            border-radius: 6px; 
+            border: 0px solid transparent;
+            vertical-align: top;
+            transition: border-color 0.3s;
+            overflow: hidden; 
+            flex-shrink: 0; 
+        }
+        .channel-option.active {
+            border-color: var(--time-color); 
+            box-shadow: 0 0 4px var(--time-color); 
+        }
+        
+        /* 1. Quality Name (Play/Select) */
+        .channel-name {
+            font-size: 1.1em;
+            color: var(--quality-color); 
+            font-weight: 800; 
+            white-space: nowrap;
+            padding: 8px 12px; 
+            background-color: #000000;
+            line-height: 1.2;
+            transition: all 0.3s;
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+            border-right: 1px solid rgba(255, 255, 255, 0.3); 
+        }
+        .channel-option.active .channel-name {
+            background-color: var(--time-color); 
+            color: var(--primary-bg); 
+        }
+        
+        /* 2. Download Icon (Font Awesome) */
+        .download-icon {
+            padding: 8px 12px; 
+            background-color: var(--download-icon); 
+            color: white;
+            font-size: 1.2em; 
+            font-weight: 900; 
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        .download-icon:hover {
+            background-color: #1976D2; 
+        }
+        
+        /* Ensure Font Awesome icon is visible */
+        .fa-cloud-download {
+            font-size: 1.2em;
+        }
+
+
+        /* --- Filter/Category Split Bar --- */
+        #filter-container {
+            width: 100%; 
+            max-width: 500px;
+            margin: 0 auto; 
+            display: flex; 
+            gap: 5px; 
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            background-color: black;
+            padding: 1px 1px; 
+        }
+        .control-box {
+            width: 50%;
+        }
+
+        /* Search & Category Styling */
+        #search-input, #category-select {
+            width: 100%;
+            padding: 10px 10px; 
+            border: 1px solid var(--accent-color);
+            border-radius: 6px; 
+            background-color: #333;
+            color: var(--text-primary);
+            font-size: 1em; 
+            outline: none;
+            box-shadow: 0 0 3px rgba(229, 9, 20, 0.5);
+            -webkit-appearance: none; 
+            -moz-appearance: none;
+            appearance: none;
+            line-height: 1.2; 
+            cursor: pointer;
+        }
+        #search-input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        /* Category specific styling */
+        .category-wrapper {
+             position: relative;
+             width: 100%;
+        }
+        #category-select {
+            font-weight: bold;
+            background-color: var(--category-bg); 
+            border-color: var(--category-bg);
+            color: var(--text-primary);
+            padding-right: 30px; 
+        }
+        
+        /* Custom Dropdown Icon */
+        .category-wrapper::after {
+            content: '▼'; 
+            position: absolute;
+            top: 50%;
+            right: 15px; 
+            transform: translateY(-50%);
+            color: var(--text-primary);
+            font-size: 0.8em;
+            pointer-events: none; 
+        }
+        
+        /* --- Match List Container (50px gap from fixed controls) --- */
+        #match-list-container {
+            width: 95%;
+            max-width: 500px;
+            margin: 50px auto 8px auto; 
+            display: grid;
+            gap: 5px;
+        }
+        
+        /* --- Individual Match Card Styles --- */
+        .match-card {
+            background-color: var(--secondary-bg);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 5px 5px rgba(0, 0, 0, 0.6);
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            border: 2px solid transparent;
+        }
+        .match-card:hover {
+            background-color: #2F2F2F;
+            transform: scale(1.02);
+        }
+        
+        /* Selected Movie Row Enhancement */
+        .match-card.active {
+            background-color: var(--active-bg); 
+            border-color: var(--active-card-border); 
+            box-shadow: 0 0 8px rgba(255, 195, 0, 0.5);
+        }
+        .match-info {
+            display: flex;
+            align-items: flex-start; 
+            gap: 7px;
+            flex-grow: 1;
+        }
+        
+        /* Movie Poster Styling (NO SHRINKING when active) */
+        .match-info img {
+            width: 80px;
+            height: 80px;
+            object-fit:fill ;
+            border-radius: 10px;
+            border: 1px solid var(--primary-bg); 
+            flex-shrink: 0; 
+            transition: all 0.3s;
+        }
+
+        /* Ensure image retains size in active card */
+        .match-card.active .match-info img {
+             width: 80px; 
+             height: 80px; 
+             border-color: var(--time-color); 
+        }
+
+        .match-details {
+            display: flex;
+            flex-direction: column; 
+            flex-grow: 1;
+        }
+        .match-name {
+            font-weight: bold;
+            font-size: 1.1em; 
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+        .match-date { 
+            font-size: 0.7em;
+            color: var(--time-color);
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        .match-description { 
+            font-size: 0.7em; 
+            color: var(--description-color);
+            margin-top: 2px;
+            white-space: normal; 
+        }
+        .arrow {
+            font-size: 1.8em;
+            color: var(--accent-color);
+            margin-left: 10px;
+        }
+        /* --- Footer/Disclaimer --- */
+        .disclaimer {
+            margin: 30px 0 15px 0;
+            width: 95%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .disclaimer font {
+            color: var(--text-secondary);
+            font-size: 0.7em !important;
+            line-height: 1.4;
+        }
+        #loading-message {
+            text-align: center;
+            padding: 30px;
+            font-size: 1.4em;
+            color: var(--time-color);
+        }
+    </style>
+</head>
+<body>
+
+<table class="telegram-btn">
+    <tr>
+        <td class="telegram-btn1"><a href="https://t.me/tvgotk">LIVE4WAP </a></td>
+        <td class="telegram-btn2"><a href="https://t.me/tv4wap">TV4WAP </a></td>
+    </tr>
+</table>
+
+<div class="player-container">
+    <div class="player">
+        <iframe id="streamIframe" src="about:blank" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen" loading="lazy"  allowfullscreen="true" referrerpolicy="no-referrer"></iframe>
+    </div>
+
+    <div id="selected-movie-title">
+        <div id="selected-movie-name-text">
+            Please select a movie from the list below.
+        </div>
+    </div>
+    
+    <div id="server-buttons-container">
+        </div>
+
+    <div id="filter-container">
+        <div class="control-box">
+             <input type="text" id="search-input" placeholder="Search name/date/desc">
+        </div>
+        <div class="control-box">
+             <div class="category-wrapper">
+                <select id="category-select">
+                    </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="match-list-container">
+    <p id="loading-message">Loading schedule...</p>
+</div>
+
+<div class="disclaimer">
+    <center><font size="1px" color="#333">
+   Disclaimer: This site is not affiliated with any Movie. All copyrighted content belongs to its respective owners. The linked source, https://pixeldrain.dev, hosts content that was uploaded by independent third parties, and we do not host any files ourselves.
+​For inquiries, please contact: Wapgotube@gmail.com
+    </font></center>
+</div>
+    
+<script>
+    // --- Configuration ---
+    const CATEGORIES = {
+        'Bollywood': 'https://live4wap.neocities.org/film.txt',
+        'South': 'https://live4wap.neocities.org/South.txt',
+        'Hollywood': 'https://live4wap.neocities.org/Hollywood.txt',
+        'Other': 'https://live4wap.neocities.org/other.txt'
+    };
+    
+    // THE PROXY URL FOR STREAMING
+    const PROXY_URL = 'https://www.livereacting.com/tools/mp4-player-embed?url=';
+    
+    // DOWNLOAD ICON - Font Awesome class for cloud download
+    const DOWNLOAD_ICON_HTML = '<i class="fa fa-cloud-download"></i>'; 
+    
+    let currentCategoryUrl = CATEGORIES.Bollywood; 
+    
+    // --- DOM Elements ---
+    const streamIframe = document.getElementById('streamIframe');
+    const matchListContainer = document.getElementById('match-list-container');
+    const serverButtonsContainer = document.getElementById('server-buttons-container');
+    const selectedMovieTitle = document.getElementById('selected-movie-title'); 
+    // Removed: const selectedMovieImage = document.getElementById('selected-movie-image'); 
+    const selectedMovieNameText = document.getElementById('selected-movie-name-text'); 
+    const loadingMessage = document.getElementById('loading-message');
+    const searchInput = document.getElementById('search-input');
+    const categorySelect = document.getElementById('category-select');
+    
+    let allMatchData = {};
+    let currentMatchKey = null;
+    let currentServerKey = 's1'; 
+
+    // --- Core Functions ---
+    
+    function extractTimeAndDescription(channels) {
+        if (!channels || channels.length === 0) return { time: 'N/A', description: 'No Details' };
+        
+        const firstItem = channels[0];
+        const timeText = firstItem.channel_name ? firstItem.channel_name.trim() : 'Date N/A';
+        const descriptionText = firstItem.url || 'Description N/A';
+
+        return { time: timeText, description: descriptionText };
+    }
+
+    /**
+     * Renders the horizontally scrolling quality options, now with integrated download icons.
+     */
+    function renderServerButtons(channels) {
+        serverButtonsContainer.innerHTML = '';
+        
+        const qualityChannels = channels.filter((c, index) => 
+            index > 0 && c.channel_name && c.channel_name.toUpperCase().includes('P')
+        );
+
+        qualityChannels.forEach((channel, index) => {
+            const serverKey = `s${index + 1}`;
+            const qualityText = channel.channel_name.trim() || `Link ${index + 1}`;
+            const originalStreamUrl = channel.url; // The non-proxied link for download
+
+            const optionDiv = document.createElement('div');
+            optionDiv.className = `channel-option`;
+            optionDiv.dataset.serverKey = serverKey;
+            
+            // Channel Name (The Play/Select button area)
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'channel-name';
+            nameDiv.textContent = qualityText;
+            nameDiv.title = `Play ${qualityText}`;
+
+            // Download Icon (The Download link area)
+            const downloadDiv = document.createElement('div');
+            downloadDiv.className = 'download-icon';
+            downloadDiv.innerHTML = DOWNLOAD_ICON_HTML; 
+            downloadDiv.title = `Download ${qualityText}`;
+
+            optionDiv.appendChild(nameDiv);
+            optionDiv.appendChild(downloadDiv);
+
+
+            if (serverKey === currentServerKey) {
+                optionDiv.classList.add('active');
+            }
+
+            // 1. Event listener for playing the stream (clicking the name/tab area)
+            nameDiv.addEventListener('click', function(event) {
+                event.stopPropagation(); 
+                
+                document.querySelectorAll('.channel-option').forEach(b => b.classList.remove('active'));
+                optionDiv.classList.add('active');
+
+                currentServerKey = serverKey;
+                updateStream(originalStreamUrl); 
+            });
+            
+            // 2. Event listener for downloading (clicking the download icon)
+            downloadDiv.addEventListener('click', function(event) {
+                event.stopPropagation(); 
+                window.open(originalStreamUrl, '_blank'); 
+            });
+
+
+            serverButtonsContainer.appendChild(optionDiv);
+        });
+        
+        // Auto-select the first quality option on render
+        if(qualityChannels.length > 0) {
+            currentServerKey = 's1';
+            updateStream(qualityChannels[0].url);
+        } else {
+            streamIframe.src = 'about:blank';
+        }
+    }
+    
+    /**
+     * Updates the iframe source using the proxy URL.
+     * @param {string} originalUrl - The direct stream URL.
+     */
+    function updateStream(originalUrl) {
+        if (!originalUrl) {
+            streamIframe.src = 'about:blank';
+            return;
+        }
+        
+        // Apply the proxy URL to the original stream URL
+        const proxiedUrl = PROXY_URL + encodeURIComponent(originalUrl);
+        streamIframe.src = proxiedUrl;
+    }
+
+    function filterMatches() {
+        const query = searchInput.value.toLowerCase();
+        const cards = matchListContainer.querySelectorAll('.match-card');
+
+        cards.forEach(card => {
+            const searchableText = card.dataset.searchableText.toLowerCase();
+            
+            if (searchableText.includes(query)) {
+                card.style.display = 'flex'; 
+            } else {
+                card.style.display = 'none'; 
+            }
+        });
+    }
+
+    function selectMatch(matchKey) {
+        currentMatchKey = matchKey;
+        const channels = allMatchData[matchKey];
+        // const imageSrc = (channels[0] && channels[0].image) ? channels[0].image : 'https://via.placeholder.com/30x45?text=Img';
+        
+        currentServerKey = 's1'; 
+
+        renderServerButtons(channels);
+        
+        // Update the selected title display with only the name
+        // selectedMovieImage.src = imageSrc; // Removed
+        selectedMovieNameText.textContent = matchKey.toLowerCase(); 
+
+        // Visual selection in the list
+        document.querySelectorAll('.match-card').forEach(card => {
+            card.classList.remove('active');
+        });
+        
+        const selectedCard = document.querySelector(`.match-card[data-match-key="${matchKey}"]`);
+        if(selectedCard) {
+            selectedCard.classList.add('active');
+        }
+    }
+
+    function renderMatchList() {
+        if (loadingMessage) loadingMessage.remove();
+        matchListContainer.innerHTML = '';
+        
+        for (const [matchKey, channels] of Object.entries(allMatchData)) {
+            const firstItem = channels[0] || {};
+            const imageSrc = firstItem.image ? firstItem.image : 'https://via.placeholder.com/80x120?text=Poster+N/A';
+            
+            const { time, description } = extractTimeAndDescription(channels);
+
+            const searchableText = `${matchKey} ${time} ${description}`;
+            
+            const card = document.createElement('div');
+            card.className = 'match-card';
+            card.dataset.matchKey = matchKey;
+            card.dataset.searchableText = searchableText; 
+            
+            card.innerHTML = `
+                <div class="match-info">
+                    <img src="${imageSrc}" alt="${matchKey} Poster">
+                    <div class="match-details">
+                        <div class="match-name">${matchKey}</div>
+                        <div class="match-date">${time}</div> 
+                        <div class="match-description">${description}</div> 
+                    </div>
+                </div>
+                <span class="arrow">›</span>
+            `;
+            
+            card.addEventListener('click', () => selectMatch(matchKey));
+            
+            matchListContainer.appendChild(card);
+        }
+        
+        const firstMatchKey = Object.keys(allMatchData)[0];
+        if (firstMatchKey) {
+            selectMatch(firstMatchKey);
+        } else {
+            // selectedMovieImage.src = 'https://via.placeholder.com/30x45?text=N/A'; // Removed
+            selectedMovieNameText.textContent = "No movies found in this category.";
+        }
+    }
+    
+    function setupCategorySelector() {
+        categorySelect.innerHTML = ''; 
+
+        for (const [name, url] of Object.entries(CATEGORIES)) {
+            const option = document.createElement('option');
+            option.value = url;
+            option.textContent = name;
+            categorySelect.appendChild(option);
+            
+            if (url === currentCategoryUrl) {
+                option.selected = true;
+            }
+        }
+        
+        categorySelect.addEventListener('change', function() {
+            currentCategoryUrl = this.value;
+            searchInput.value = ''; 
+            init();
+        });
+    }
+
+    async function init() {
+        matchListContainer.innerHTML = '';
+        const msg = document.createElement('p');
+        msg.id = 'loading-message';
+        msg.textContent = 'Loading schedule...';
+        matchListContainer.appendChild(msg);
+        
+        streamIframe.src = 'about:blank';
+        serverButtonsContainer.innerHTML = ''; 
+        // selectedMovieImage.src = 'https://via.placeholder.com/30x45?text=Img'; // Removed
+        selectedMovieNameText.textContent = 'Loading...';
+
+        try {
+            const response = await fetch(currentCategoryUrl);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            allMatchData = await response.json();
+            
+            if (!allMatchData || typeof allMatchData !== 'object' || Array.isArray(allMatchData)) {
+                throw new Error("Invalid data structure received.");
+            }
+            
+            renderMatchList();
+
+        } catch (error) {
+            console.error('Failed to load schedule:', error);
+            if (document.getElementById('loading-message')) {
+                document.getElementById('loading-message').textContent = `Error loading content. Please check the JSON URL.`;
+                document.getElementById('loading-message').style.color = 'red';
+                selectedMovieNameText.textContent = 'Error loading content.';
+            }
+        }
+    }
+
+    // --- Initialization ---
+    setupCategorySelector();
+    searchInput.addEventListener('input', filterMatches);
+
+    init();
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
